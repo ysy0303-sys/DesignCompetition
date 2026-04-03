@@ -9,3 +9,4 @@ openai
 apscheduler
 websockets
 aiomysql
+pydantic-settings
