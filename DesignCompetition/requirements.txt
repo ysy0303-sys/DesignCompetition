@@ -1,12 +1,7 @@
 fastapi
-uvicorn
+uvicorn[standard]
 sqlalchemy
 pymysql
 python-dotenv
-passlib[bcrypt]
+passlib
 python-jose
-openai
-apscheduler
-websockets
-aiomysql
-pydantic-settings
