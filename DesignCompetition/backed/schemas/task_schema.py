@@ -369,6 +369,49 @@ class WeeklyReportResponse(BaseModel):
     gpa_points: List[GPATrendPoint]
     plan_updated: bool = False
 
+#=========== 推荐 ============
+class ReResponse(BaseModel):
+    code: int = 200               # 状态码，例如 200 成功，404 未找到
+    msg: str = "成功"              # 返回信息
+    data: Optional[Any] = None
+
+class ResourceType(str, enum.Enum):
+    WEBPAGE = "webpage"
+    VIDEO = "video"
+    COURSE = "course"
+    ARTICLE = "article"
+
+
+class ResourceCategory(str, enum.Enum):
+    LEARNING = "learning"
+    PRACTICE = "practice"
+    REVIEW = "review"
+    STRATEGY = "strategy"
+
+
+class LearningResource(BaseModel):
+    id: str
+    title: str
+    description: str
+    url: str
+    resource_type: ResourceType
+    category: ResourceCategory
+    source: str
+    publish_date: str
+    difficulty: str = "medium"
+    duration_minutes: int = 0
+    tags: List[str] = []
+    view_count: int = 0
+    rating: float = 0.0
+
+class RecommendationResponse(BaseModel):
+    plan_id: str
+    goal_category: str
+    current_phase: str
+    generated_at: datetime
+    recommendations: List[LearningResource]
+    total_count: int
+
 # ===================== 工具函数（依赖） =====================
 def _format_duration_text(hours: float) -> str:
     total_minutes = int(round(hours * 60))
