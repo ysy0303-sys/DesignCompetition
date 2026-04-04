@@ -7,7 +7,7 @@ from pathlib import Path
 # 读取 .env 文件
 BASE_DIR = Path(__file__).resolve().parent.parent
 load_dotenv(BASE_DIR / ".env", override=True)
-
+MAX_HISTORY_ROUNDS = 3
 class Settings(BaseSettings):
     """全局配置类"""
 
