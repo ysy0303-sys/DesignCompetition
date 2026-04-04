@@ -1250,111 +1250,38 @@ def get_weekly_reports(plan_id: str, db: Session = Depends(get_db)):
 #     return result
 #
 
-#
 #============ 推荐 =================
+@router.get("recommendation", response_model=ReResponse)
+def get_user_recommendations(
+    user_id: int = Depends(get_current_user_id),
+    db: Session = Depends(get_db)
+):
+    try:
+        # 查询用户目标
+        goals = db.query(Goal).filter(Goal.user_id == user_id).all()
+        if not goals:
+            return ApiResponse(code=404, msg="未找到用户目标", data=None)
 
-#资源类型
-class ResourceType(str, Enum):
-    WEBPAGE = "webpage"
-    VIDEO = "video"
-    COURSE = "course"
-    ARTICLE = "article"
-#资源用途
-class ResourceCategory(str, Enum):
-    LEARNING = "learning"
-    PRACTICE = "practice"
-    REVIEW = "review"
-    STRATEGY = "strategy"
+        all_recommendations = []
 
-#学习资源模型
-class LearningResource(BaseModel):
-    id: str
-    title: str
-    description: str
-    url: str
-    resource_type: ResourceType
-    category: ResourceCategory
-    source: str
-    publish_date: str
-    difficulty: str = "medium"
-    duration_minutes: int = 0
-    tags: List[str] = Field(default_factory=list)
-    view_count: int = 0
-    rating: float = 0.0
+        for goal in goals:
+            # 调用推荐服务（AI + fallback）
+            recommendations = get_recommendations_service(
+                goal_category=goal.category,
+                goal_detail=goal.content,  # ⭐映射到数据库字段
+                current_phase=getattr(goal, "phase", "基础"),  # 如果表里没有 phase 用默认
+                max_results=10
+            )
+            all_recommendations.extend(recommendations)
 
-
-class RecommendationRequest(BaseModel):
-    plan_id: str = Field(..., min_length=1)
-    goal_category: str = Field(..., min_length=1, description="目标类别，如：考研、考公、考编、资格考试、语言学习等")
-    goal_detail: str = Field(..., min_length=1, description="具体目标内容")
-    current_phase: str = Field(default="基础", description="当前学习阶段：基础、强化、冲刺、复盘")
-    max_results: int = Field(default=10, ge=1, le=30, description="返回推荐结果数量")
-
-
-class RecommendationResponse(BaseModel):
-    plan_id: str
-    goal_category: str
-    current_phase: str
-    generated_at: datetime
-    recommendations: List[LearningResource]
-    total_count: int
-
-
-
-
-# resource_store = ResourceStore()
-# _init_sample_resources(resource_store)
-#
-# router = APIRouter(prefix="/api/recommendation", tags=["推荐"])
-#
-
-# @router.post("", response_model=RecommendationResponse)
-# def get_recommendations(req: RecommendationRequest) -> RecommendationResponse:
-#     keywords = []
-#     goal_lower = req.goal_detail.lower()
-#
-#     if "数学" in goal_lower or "高数" in goal_lower:
-#         keywords.append("数学")
-#     if "英语" in goal_lower or "english" in goal_lower:
-#         keywords.append("英语")
-#     if "政治" in goal_lower:
-#         keywords.append("政治")
-#     if "申论" in goal_lower:
-#         keywords.append("申论")
-#     if "行测" in goal_lower:
-#         keywords.append("行测")
-#     if "词汇" in goal_lower:
-#         keywords.append("词汇")
-#     if "真题" in goal_lower:
-#         keywords.append("真题")
-#
-#     recommendations = resource_store.search_resources(
-#         category=req.goal_category,
-#         keywords=keywords,
-#         phase=req.current_phase,
-#         max_count=req.max_results
-#     )
-#
-#     return RecommendationResponse(
-#         plan_id=req.plan_id,
-#         goal_category=req.goal_category,
-#         current_phase=req.current_phase,
-#         generated_at=datetime.now(),
-#         recommendations=recommendations,
-#         total_count=len(recommendations),
-#     )
-#
-
-# @router.get("/categories")
-# def get_available_categories() -> dict:
-#     return {
-#         "categories": ["考研", "考公", "考编", "资格考试", "语言学习"],
-#         "phases": ["基础", "强化", "冲刺", "复盘"],
-#         "resource_types": ["webpage", "video", "course", "article"],
-#     }
-#
-#
-# def create_recommendation_app() -> FastAPI:
-#     app = FastAPI(title="学习资源推荐", version="1.0.0")
-#     app.include_router(router)
-#     return app
+        return ReResponse(
+            code=200,
+            msg="获取成功",
+            data=[r.dict() for r in all_recommendations]
+        )
+    except Exception as e:
+        return ApiResponse(
+            code=500,
+            msg=f"获取失败: {str(e)}",
+            data=None
+        )
