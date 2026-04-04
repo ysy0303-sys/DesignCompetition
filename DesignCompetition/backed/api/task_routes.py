@@ -417,61 +417,61 @@ def get_goals_progress(
     )
 
 
-# @router.get("/user/goals/progress", response_model=UserGoalsProgressResponse)
-# def get_goals_progress(
-#     user_id: int = Depends(get_current_user_id),
-#     db: Session = Depends(get_db)
-# ):
-#     """
-#     获取当前登录用户每个目标的任务完成度 + 每个目标完成百分比 + 总完成率
-#     """
-#     goals = db.query(Goal).filter(Goal.user_id == user_id).all()
-#     result = []
-#
-#     # 全局统计（算总完成率用）
-#     grand_total_tasks = 0
-#     grand_total_completed = 0
-#
-#     for goal in goals:
-#         # 1. 获取当前目标下所有任务
-#         tasks = db.query(Task).filter(Task.goal_id == goal.goal_id).all()
-#         total = len(tasks)
-#         grand_total_tasks += total
-#
-#         # 2. 统计状态
-#         status_counter = Counter(task.status for task in tasks)
-#         completed = status_counter.get("已完成", 0)
-#         in_progress = status_counter.get("进行中", 0)
-#         not_started = status_counter.get("未开始", 0)  # 修复字段匹配
-#         canceled = status_counter.get("已取消", 0)
-#
-#         # 3. 计算当前目标完成百分比(完成百分比 = 已完成任务 ÷ 总任务 × 100)
-#         if total > 0:
-#             percentage = round((completed / total) * 100, 1)  # 保留1位小数
-#         else:
-#             percentage = 0.0
-#
-#         # 4. 加入全局统计
-#         grand_total_completed += completed
-#
-#         # 5. 组装每个目标的进度（包含标题+百分比）
-#         progress = GoalTaskProgress(
-#             goal_title=goal.content,       # 目标标题
-#             completion_percentage=percentage  # 单个目标完成率%
-#         )
-#         result.append(progress)
-#
-#     # 6. 计算总完成率
-#     if grand_total_tasks > 0:
-#         overall_percentage = round((grand_total_completed / grand_total_tasks) * 100, 1)
-#     else:
-#         overall_percentage = 0.0
-#
-#     # 7. 返回（包含总完成率）
-#     return UserGoalsProgressResponse(
-#         goals=result,
-#         overall_completion_rate=overall_percentage  # 总完成率
-#     )
+@router.get("/user/goals/progress", response_model=UserGoalsProgressResponse)
+def get_goals_progress(
+    user_id: int = Depends(get_current_user_id),
+    db: Session = Depends(get_db)
+):
+    """
+    获取当前登录用户每个目标的任务完成度 + 每个目标完成百分比 + 总完成率
+    """
+    goals = db.query(Goal).filter(Goal.user_id == user_id).all()
+    result = []
+
+    # 全局统计（算总完成率用）
+    grand_total_tasks = 0
+    grand_total_completed = 0
+
+    for goal in goals:
+        # 1. 获取当前目标下所有任务
+        tasks = db.query(Task).filter(Task.goal_id == goal.goal_id).all()
+        total = len(tasks)
+        grand_total_tasks += total
+
+        # 2. 统计状态
+        status_counter = Counter(task.status for task in tasks)
+        completed = status_counter.get("已完成", 0)
+        in_progress = status_counter.get("进行中", 0)
+        not_started = status_counter.get("未开始", 0)  # 修复字段匹配
+        canceled = status_counter.get("已取消", 0)
+
+        # 3. 计算当前目标完成百分比(完成百分比 = 已完成任务 ÷ 总任务 × 100)
+        if total > 0:
+            percentage = round((completed / total) * 100, 1)  # 保留1位小数
+        else:
+            percentage = 0.0
+
+        # 4. 加入全局统计
+        grand_total_completed += completed
+
+        # 5. 组装每个目标的进度（包含标题+百分比）
+        progress = GoalTaskProgress(
+            goal_title=goal.content,       # 目标标题
+            completion_percentage=percentage  # 单个目标完成率%
+        )
+        result.append(progress)
+
+    # 6. 计算总完成率
+    if grand_total_tasks > 0:
+        overall_percentage = round((grand_total_completed / grand_total_tasks) * 100, 1)
+    else:
+        overall_percentage = 0.0
+
+    # 7. 返回（包含总完成率）
+    return UserGoalsProgressResponse(
+        goals=result,
+        overall_completion_rate=overall_percentage  # 总完成率
+    )
 
 #======== 每周完成率 ==============
 @router.get("/user/weekly_completion_rate")
