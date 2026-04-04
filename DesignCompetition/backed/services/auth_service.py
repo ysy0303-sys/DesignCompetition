@@ -13,8 +13,9 @@ class AuthService:
         existing_user = self.db.query(User).filter(User.username == req.username).first()
         if existing_user:
             raise ValueError("用户名已存在")
-
-        hashed_pwd = get_password_hash(req.password)
+        
+        truncated_password = req.password[:72]
+        hashed_pwd = get_password_hash(truncated_password)
 
         new_user = User(
             username=req.username,
