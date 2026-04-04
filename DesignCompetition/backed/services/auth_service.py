@@ -48,9 +48,10 @@ class AuthService:
             raise ValueError("用户名或密码错误")
 
         # 2. 验证密码
-        if not verify_password(req.password, user.password):
+        truncated_password = req.password[:72]
+        if not verify_password(truncated_password, user.password):
             raise ValueError("用户名或密码错误")
-
+            
         # 3. 生成Token（包含用户ID）
         access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
         access_token = create_access_token(
