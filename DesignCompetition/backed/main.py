@@ -8,6 +8,8 @@ from backed.api.chat_api import router as chat_router
 from backed.api.auth_api import router as auth_router
 from backed.core.websocket_manager import manager
 from backed.core.scheduler import start_scheduler
+from dotenv import load_dotenv
+load_dotenv()
 
 app = FastAPI(
     title=settings.APP_NAME,
