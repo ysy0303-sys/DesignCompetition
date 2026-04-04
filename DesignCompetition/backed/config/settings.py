@@ -8,6 +8,7 @@ from pathlib import Path
 BASE_DIR = Path(__file__).resolve().parent.parent
 load_dotenv(BASE_DIR / ".env", override=True)
 MAX_HISTORY_ROUNDS = 3
+
 class Settings(BaseSettings):
     """全局配置类"""
 
@@ -24,7 +25,7 @@ class Settings(BaseSettings):
 
     # ===== 数据库 =====
     DB_USER: str = os.getenv("DB_USER", "root")
-    DB_PASSWORD: str = os.getenv("DB_PASSWORD", "")
+    DB_PASSWORD: str = os.getenv("DB_PASSWORD", "")  # <-- 我就改了这里！
     DB_NAME: str = os.getenv("DB_NAME", "education")
     DB_CHARSET: str = os.getenv("DB_CHARSET", "utf8mb4")
 
