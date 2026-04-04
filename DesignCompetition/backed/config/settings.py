@@ -1,15 +1,12 @@
-# backed/config/settings.py
 import os
 from typing import List, Optional
 from pydantic_settings import BaseSettings
 from dotenv import load_dotenv
 from pathlib import Path
 
+# 读取 .env 文件
 BASE_DIR = Path(__file__).resolve().parent.parent  # backed 上一级
 load_dotenv(BASE_DIR / ".env", override=True)
-
-
-
 
 # 记忆轮数（user+assistant算一轮）
 MAX_HISTORY_ROUNDS = 3
@@ -33,7 +30,7 @@ class Settings(BaseSettings):
     DB_NAME: str = os.getenv("DB_NAME", "education")
     DB_CHARSET: str = os.getenv("DB_CHARSET", "utf8mb4")
 
-    # ===== ✅ LLM配置（关键修复点）=====
+    # ===== LLM配置 =====
     LLM_API_KEY: Optional[str] = os.getenv("LLM_API_KEY")
     LLM_BASE_URL: Optional[str] = os.getenv("LLM_BASE_URL")
     LLM_MODEL: Optional[str] = os.getenv("LLM_MODEL")
@@ -45,6 +42,10 @@ class Settings(BaseSettings):
 
     @property
     def DATABASE_URL(self) -> str:
+        """优先使用 Railway 提供的 DATABASE_URL，否则用本地配置"""
+        env_url = os.getenv("DATABASE_URL")
+        if env_url:
+            return env_url
         return (
             f"mysql+pymysql://{self.DB_USER}:{self.DB_PASSWORD}@{self.DB_HOST}:{self.DB_PORT}/"
             f"{self.DB_NAME}?charset={self.DB_CHARSET}"
@@ -55,11 +56,10 @@ class Settings(BaseSettings):
         env_file = ".env"
         extra = 'ignore'
 
-
 # 全局配置实例
 settings = Settings()
 
-# LLM通用系统提示（复用之前的逻辑）
+# LLM通用系统提示
 UNIVERSAL_SYSTEM_PROMPT = (
     "你是全场景任务规划引擎，适配考公、考研、考编、职业资格、语言学习、技能提升、日常学习等所有目标。"
     "你必须仅输出可被 json.loads 直接解析的纯 JSON 字符串，不得输出 markdown、代码块、解释文本。"
