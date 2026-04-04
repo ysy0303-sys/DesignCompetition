@@ -28,7 +28,7 @@ from backed.schemas.task_schema import (
     DayDetailResponse, TaskTimerToggleRequest, TaskTimerToggleResponse,
     TaskTimerClearRequest, TaskTimerClearResponse, GPACalculateRequest,TimePoint,StudyTimeResponse,
     GPACalculateResponse, GPAWeekTrendResponse, TaskCompletionToggleRequest,UserGoalsProgressResponse,
-    TaskCompletionToggleResponse, TaskCompletionDayResponse,TaskDailyGPAInfo,GoalTaskProgress,
+    TaskCompletionToggleResponse, TaskCompletionDayResponse,TaskDailyGPAInfo,GoalTaskProgress,ReResponse,
     TaskCompletionWeekResponse, TaskCompletionMonthResponse,TaskTimerSubmitRequest,GoalDailyProgress,
     DailySuggestionRequest, DailySuggestionResponse, WeeklyCheckResponse,
     WeeklyReportRequest, WeeklyReportResponse, WeeklyReport,PlancreateResponse,ApiResponse,TargetResponse,
