@@ -1251,7 +1251,7 @@ def get_weekly_reports(plan_id: str, db: Session = Depends(get_db)):
 #
 
 #============ 推荐 =================
-@router.get("recommendation", response_model=ReResponse)
+@router.get("/recommendation", response_model=ReResponse)
 def get_user_recommendations(
     user_id: int = Depends(get_current_user_id),
     db: Session = Depends(get_db)
