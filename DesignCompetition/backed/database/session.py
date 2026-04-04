@@ -1,22 +1,24 @@
-# backed/database/session.py
 from sqlalchemy import create_engine
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker, Session
-
+from sqlalchemy.orm import sessionmaker, declarative_base
 from backed.config.settings import settings
 
-# 创建数据库引擎
-engine = create_engine(settings.DATABASE_URL, pool_pre_ping=True, pool_recycle=3600)
-# 创建会话工厂
+# 使用 settings.DATABASE_URL
+engine = create_engine(
+    settings.DATABASE_URL,
+    pool_pre_ping=True,
+    pool_size=5,
+    max_overflow=10,
+)
+
+# Session 本地实例
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-# 基础模型类
+
+# Base 类
 Base = declarative_base()
 
-def get_db() -> Session:
-    """
-    数据库会话依赖（供FastAPI路由使用）
-    自动创建会话，请求结束后关闭
-    """
+# FastAPI 依赖注入
+def get_db():
+    """获取数据库 Session"""
     db = SessionLocal()
     try:
         yield db
