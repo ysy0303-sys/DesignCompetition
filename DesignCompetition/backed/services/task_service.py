@@ -23,7 +23,7 @@ from uuid import uuid4
 from typing import List, Tuple
 from threading import Lock
 from backed.database.models import Task as TaskORM
-from backed.schemas.task_schema import TaskSchema
+from backed.schemas.task_schema import TaskSchema,TaskDay
 from backed.database.models import TaskState
 # 导入模型
 from backed.schemas.task_schema import (
@@ -863,7 +863,7 @@ def get_day_detail_from_db(db: Session, user_id: str, current: date):
     # 转换为 Schema 格式
     schema_tasks = []
     for task in tasks:
-        schema_tasks.append(TaskSchema(
+        schema_tasks.append(TaskDay(
             title=task.title,
             description=task.description,
             priority=task.priority.value
