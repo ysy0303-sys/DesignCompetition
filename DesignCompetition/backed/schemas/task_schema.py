@@ -15,6 +15,7 @@ class ChecklistItem(BaseModel):
     estimated_duration: str = Field(..., min_length=1, max_length=20)
 
 class TaskSchema(BaseModel):
+    date: date
     title: str
     description: str
     priority: TaskPriorityEnum
