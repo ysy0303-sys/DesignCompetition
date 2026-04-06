@@ -365,12 +365,12 @@ def get_goals_progress(
 
         # 2. 统计状态
         status_counter = Counter(task.status for task in tasks)
-
+        print(status_counter)
         # 用枚举匹配，不是用字符串！
-        completed = status_counter.get(TaskStatusEnum.DONE.value, 0)
-        in_progress = status_counter.get(TaskStatusEnum.DOING.value, 0)
-        not_started = status_counter.get(TaskStatusEnum.TODO.value, 0)
-        canceled = status_counter.get(TaskStatusEnum.CANCELLED.value, 0)
+        completed = status_counter.get(TaskStatusEnum.DONE, 0)
+        in_progress = status_counter.get(TaskStatusEnum.DOING, 0)
+        not_started = status_counter.get(TaskStatusEnum.TODO, 0)
+        canceled = status_counter.get(TaskStatusEnum.CANCELLED, 0)
 
         logger.info(f"✅ 已完成: {completed}")
         logger.info(f"🔄 进行中: {in_progress}")
@@ -663,12 +663,13 @@ def submit_task_timer(
     )
     #关键新增：日期 & 时间
     today = date.today()
-
+    import math
+    duration_in_minutes = math.ceil(req.duration / 60)
     #写数据库
     task_state = TaskState(
         user_id=task.user_id,
         plan_id=plan_id,
-        duration=req.duration,
+        duratin=duration_in_minutes,
         focus_score=req.focus_score,
         brain_power_score=req.brain_power_score,
         time_score=time_score,
@@ -685,7 +686,6 @@ def submit_task_timer(
         "plan_id": plan_id,
         "suggestion": suggestion
     }
-
 
 @router.post("/task/timer/toggle", response_model=TaskTimerToggleResponse)
 def toggle_task_timer(req: TaskTimerToggleRequest) -> TaskTimerToggleResponse:
