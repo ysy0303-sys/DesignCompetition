@@ -282,12 +282,13 @@ def get_day_detail(plan_id: str, year: int, month: int, day: int) -> DayDetailRe
 #========================== 首页 ===============================
 #首页的每日任务
 @router.get("/tasks/day", response_model=DayDetailResponse)
+@router.get("/tasks/day", response_model=DayDetailResponse)
 def get_day_detail(
     year: int,
     month: int,
     day: int,
     db: Session = Depends(get_db),
-    user_id: int = Depends(get_current_user_id),  # 直接是用户 ID
+    user_id: int = Depends(get_current_user_id),
 ) -> DayDetailResponse:
 
     # 1️⃣ 校验日期
@@ -298,21 +299,14 @@ def get_day_detail(
     if day < 1 or day > max_day:
         raise HTTPException(status_code=400, detail=f"日期必须在 1~{max_day}")
 
-    current = date(year, month, day)
+    target_date = date(year, month, day)
 
-    # 2️⃣ 查询当天任务
-    tasks = db.query(Task).filter(
-        Task.user_id == user_id,       # 用户 ID
-        func.date(Task.task_date) == current  # 对应数据库字段 task_date
-    ).all()
-    from datetime import date as py_date
-    target_date = py_date(year, month, day)
-
+    # 2️⃣ 直接调用正确的函数查询（只查这一次！）
     tasks_data = get_day_detail_from_db(db, user_id, target_date)
 
     return DayDetailResponse(
         plan_id="auto",
-        date=f"{year}-{month:02d}-{day:02d}",  # 格式化日期字符串
+        date=f"{year}-{month:02d}-{day:02d}",
         task_count=len(tasks_data),
         tasks=tasks_data
     )
