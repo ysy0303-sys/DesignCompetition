@@ -862,17 +862,12 @@ def get_day_detail_from_db(db: Session, user_id: str, current: date):
 
     # 转换为 Schema 格式
     schema_tasks = []
-    for task in tasks:
+        for task in tasks:
         schema_tasks.append(TaskSchema(
-            date=task.task_date,
             title=task.title,
             description=task.description,
-            estimated_hours=task.planned_duration_minutes / 60,
-            estimated_duration=_format_duration_text(task.planned_duration_minutes / 60),
-            planned_duration_minutes=task.planned_duration_minutes,
-            priority=task.priority.value,
-            depends_on=task.depends_on.split(",") if task.depends_on else [],
-            checklist=[]  # 可根据实际需求补充
+            priority=task.priority.value
+            
         ))
     return schema_tasks
 #----------周报系统---------------
