@@ -664,7 +664,7 @@ def submit_task_timer(
     task_state = TaskState(
         user_id=task.user_id,
         plan_id=plan_id,
-        duratin=duration_in_minutes,
+        duration=duration_in_minutes,
         focus_score=req.focus_score,
         brain_power_score=req.brain_power_score,
         time_score=time_score,
