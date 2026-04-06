@@ -866,7 +866,7 @@ def get_day_detail_from_db(db: Session, user_id: str, current: date):
         schema_tasks.append(TaskDay(
             title=task.title,
             description=task.description,
-            priority=task.priority
+            priority=task.priority.value
            
         ))
     return schema_tasks
