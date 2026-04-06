@@ -18,8 +18,68 @@ class TaskSchema(BaseModel):
     date: date
     title: str
     description: str
+    estimated_hours: float = Field(..., ge=0.5, le=12)
+    estimated_duration: str = Field(default="", min_length=0, max_length=20)
+    planned_duration_minutes: int = Field(default=0, ge=0, le=720)
     priority: TaskPriorityEnum
- 
+    depends_on: List[str] = Field(default_factory=list)
+    checklist: List[ChecklistItem] = Field(default_factory=list)
+
+    @model_validator(mode="after")
+    def _fill_planned_minutes(self) -> "TaskSchema":
+        if self.planned_duration_minutes <= 0:
+            self.planned_duration_minutes = max(int(round(self.estimated_hours * 60)), 1)
+        return self
+
+    @field_serializer("checklist", when_used="json")
+    def _serialize_checklist(self, checklist: List[ChecklistItem]) -> List[str]:
+        return [item.title for item in checklist]
+
+    @field_validator("checklist", mode="before")
+    @classmethod
+    def _coerce_checklist(cls, value):
+        if value is None:
+            return []
+        if not isinstance(value, list):
+            return []
+
+        normalized = []
+        for item in value:
+            if isinstance(item, ChecklistItem):
+                normalized.append(item)
+                continue
+            if isinstance(item, str):
+                text = item.strip() or "子任务"
+                normalized.append(
+                    {
+                        "title": text,
+                        "estimated_hours": 0.5,
+                        "estimated_duration": _format_duration_text(0.5),
+                    }
+                )
+                continue
+            if isinstance(item, dict):
+                title = str(item.get("title", "")).strip() or "子任务"
+                raw_hours = item.get("estimated_hours", 0.5)
+                try:
+                    hours = float(raw_hours)
+                except (TypeError, ValueError):
+                    hours = 0.5
+                if hours < 0.1:
+                    hours = 0.1
+                if hours > 4:
+                    hours = 4
+                normalized.append(
+                    {
+                        "title": title,
+                        "estimated_hours": round(hours, 2),
+                        "estimated_duration": str(item.get("estimated_duration", "")).strip() or _format_duration_text(
+                            hours),
+                    }
+                )
+        return normalized
+
+
 
 
 # ===================== 计划请求/响应模型 =====================
@@ -151,6 +211,13 @@ class TaskTimerClearResponse(BaseModel):
     plan_id: str
     cleared_count: int
     message: str
+
+#==== 首页每日任务 =======
+class TaskDay(BaseModel):
+    title: str
+    description: str
+    priority: TaskPriorityEnum
+    
 #================== 首页目标完成度 ===============
 class GoalTaskProgress(BaseModel):
     goal_title: str
