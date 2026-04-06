@@ -19,11 +19,7 @@ class TaskSchema(BaseModel):
     description: str
     priority: TaskPriorityEnum
  
-    @model_validator(mode="after")
-    def _fill_planned_minutes(self) -> "TaskSchema":
-        if self.planned_duration_minutes <= 0:
-            self.planned_duration_minutes = max(int(round(self.estimated_hours * 60)), 1)
-        return self
+
 
 # ===================== 计划请求/响应模型 =====================
 class PlanRequest(BaseModel):
