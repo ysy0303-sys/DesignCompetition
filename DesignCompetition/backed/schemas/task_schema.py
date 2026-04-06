@@ -129,6 +129,13 @@ class ResponseModel(BaseModel):
     code: int
     msg: str
     data: Optional[Any] = None
+
+#==== 首页每日任务 =======
+class TaskDay(BaseModel):
+    title: str
+    description: str
+    priority: TaskPriorityEnum
+    
 # ===================== 日历统计模型 =====================
 class MonthItem(BaseModel):
     month: int
@@ -158,7 +165,7 @@ class DayDetailResponse(BaseModel):
     date: date
     task_count: int
     # total_daily_hours: float = 0
-    tasks: List[TaskSchema]
+    tasks: List[TaskDay]
 
 # ===================== 任务计时模型 =====================
 class TaskTimerToggleRequest(BaseModel):
