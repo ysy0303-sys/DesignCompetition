@@ -21,14 +21,14 @@ from enum import Enum
 from typing import List
 from fastapi import FastAPI, APIRouter, HTTPException
 from pydantic import BaseModel, Field
-
+from backed.services.recommendation_service import get_recommendations_service
 # 导入项目内部模块（根据你的项目结构调整导入路径）
 from backed.schemas.task_schema import (
     PlanRequest, SessionCreateResponse, YearMonthsResponse, MonthDaysResponse,
-    DayDetailResponse, TaskTimerToggleRequest, TaskTimerToggleResponse,
+    DayDetailResponse, TaskTimerToggleRequest, TaskTimerToggleResponse,ReResponse,
     TaskTimerClearRequest, TaskTimerClearResponse, GPACalculateRequest,TimePoint,StudyTimeResponse,
     GPACalculateResponse, GPAWeekTrendResponse, TaskCompletionToggleRequest,UserGoalsProgressResponse,
-    TaskCompletionToggleResponse, TaskCompletionDayResponse,TaskDailyGPAInfo,GoalTaskProgress,ReResponse,
+    TaskCompletionToggleResponse, TaskCompletionDayResponse,TaskDailyGPAInfo,GoalTaskProgress,
     TaskCompletionWeekResponse, TaskCompletionMonthResponse,TaskTimerSubmitRequest,GoalDailyProgress,
     DailySuggestionRequest, DailySuggestionResponse, WeeklyCheckResponse,
     WeeklyReportRequest, WeeklyReportResponse, WeeklyReport,PlancreateResponse,ApiResponse,TargetResponse,
@@ -43,6 +43,7 @@ from backed.services.task_service import (
     _analyze_weekly_data, _check_alert_conditions, _generate_weekly_report_content,get_day_detail_from_db,
     _generate_adjusted_plan, _format_elapsed_seconds,_build_daily_completion_key,check_weekly_trigger_task
 )
+
 
 # 1. 关键改造：创建APIRouter实例（替代原代码的app）
 router = APIRouter(tags=["学习计划/任务管理"])
