@@ -1,7 +1,7 @@
 # backend/schemas/task_schema.py
 from datetime import date, datetime
 from typing import List, Literal, Optional, Dict, Any
-from pydantic import BaseModel, Field, model_validator, field_serializer, field_validator, model_serializer
+from pydantic import BaseModel, Field, model_validator, field_serializer, field_validator, ConfigDict
 import enum
 # ===================== 基础通用模型 =====================
 class TaskPriorityEnum(enum.Enum):
@@ -135,7 +135,7 @@ class TaskDay(BaseModel):
     title: str
     description: str
     priority: TaskPriorityEnum
-    
+    model_config = ConfigDict(from_attributes=True)
 # ===================== 日历统计模型 =====================
 class MonthItem(BaseModel):
     month: int
@@ -164,9 +164,8 @@ class DayDetailResponse(BaseModel):
     plan_id: str
     date: date
     task_count: int
-    # total_daily_hours: float = 0
     tasks: List[TaskDay]
-
+    model_config = ConfigDict(from_attributes=True)
 # ===================== 任务计时模型 =====================
 class TaskTimerToggleRequest(BaseModel):
     plan_id: str = Field(..., min_length=1)
