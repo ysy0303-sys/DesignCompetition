@@ -393,7 +393,7 @@ def get_goals_progress(
 
     # 6. 计算总完成率
     if grand_total_tasks > 0:
-        overall_percentage = round((grand_total_completed / grand_total_tasks) * 100, 1)
+        overall_percentage = int(round((grand_total_completed / grand_total_tasks) * 100))
     else:
         overall_percentage = 0.0
 
