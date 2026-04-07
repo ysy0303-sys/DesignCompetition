@@ -1205,7 +1205,7 @@ def get_user_recommendations(
         for goal in goals:
             # 调用推荐服务（AI + fallback）
             recommendations = get_recommendations_service(
-                goal_category=goal.category,
+                goal_category=goal.goal_type,
                 goal_detail=goal.content,  # ⭐映射到数据库字段
                 current_phase=getattr(goal, "phase", "基础"),  # 如果表里没有 phase 用默认
                 max_results=10
