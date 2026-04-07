@@ -375,7 +375,7 @@ def get_goals_progress(
 
         # 3. 计算当前目标完成百分比
         if total > 0:
-            percentage = round((completed / total) * 100, 1)
+            percentage = int(round((completed / total) * 100))
         else:
             percentage = 0.0
 
