@@ -571,8 +571,7 @@ def get_week_study_time(
         })
 
     return StudyTimeResponse(
-        total_duration=total,
-        # data=result
+        total_duration=total
     )
 
 #每月学习时长
@@ -606,8 +605,7 @@ def get_month_study_time(
         })
 
     return StudyTimeResponse(
-        total_duration=total,
-        # data=result
+        total_duration=total
     )
 
 
