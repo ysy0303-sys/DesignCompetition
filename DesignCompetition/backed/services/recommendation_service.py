@@ -32,7 +32,47 @@ def call_model_for_recommendations(
                 "role": "user",
                 "content": f"推荐{max_results}个关于'{goal_detail}'的学习资源，目标类别是{goal_category}，阶段{current_phase}。类型包括网页、视频、课程、文章。"
             }
-        ]
+        ],
+        # ======================
+        # 👇 就加这一大段
+        # ======================
+        "tools": [
+            {
+                "type": "function",
+                "function": {
+                    "name": "output_recommendations",
+                    "parameters": {
+                        "type": "object",
+                        "properties": {
+                            "recommendations": {
+                                "type": "array",
+                                "items": {
+                                    "type": "object",
+                                    "properties": {
+                                        "id": {"type": "string"},
+                                        "title": {"type": "string"},
+                                        "description": {"type": "string"},
+                                        "url": {"type": "string"},
+                                        "resource_type": {"type": "string"},
+                                        "category": {"type": "string"},
+                                        "source": {"type": "string"},
+                                        "difficulty": {"type": "string"},
+                                        "tags": {"type": "array", "items": {"type": "string"}},
+                                        "rating": {"type": "number"}
+                                    },
+                                    "required": ["title", "description", "url", "resource_type"]
+                                }
+                            }
+                        },
+                        "required": ["recommendations"]
+                    }
+                }
+            }
+        ],
+        "tool_choice": {
+            "type": "function",
+            "function": {"name": "output_recommendations"}
+        }
     }
 
     data = json.dumps(payload, ensure_ascii=False).encode("utf-8")
@@ -106,9 +146,19 @@ def build_fallback_recommendations(goal_category: str, goal_detail: str, max_res
             publish_date="2025-01-20"
         )],
         # 可以继续增加其它目标类别
+        "default": [
+            LearningResource(
+                id="fallback_default",
+                title=f"{goal_category}学习指南",
+                description=f"帮助你学习{goal_detail}的基础入门资源",
+                url="https://www.baidu.com",
+                resource_type="article",
+                category="learning",
+                source="系统推荐"
+            )]
     }
-    return fallback_data.get(goal_category, [])[:max_results]
-
+    # return fallback_data.get(goal_category, [])[:max_results]
+    return fallback_data.get(goal_category, fallback_data["default"])[:max_results]
 # -----------------------------
 # 对外统一入口
 # -----------------------------
