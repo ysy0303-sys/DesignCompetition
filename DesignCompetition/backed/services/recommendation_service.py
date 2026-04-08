@@ -154,7 +154,8 @@ def build_fallback_recommendations(goal_category: str, goal_detail: str, max_res
                 url="https://www.baidu.com",
                 resource_type="article",
                 category="learning",
-                source="系统推荐"
+                source="系统推荐",
+                publish_date="2025-01-01"  
             )]
     }
     # return fallback_data.get(goal_category, [])[:max_results]
