@@ -670,7 +670,7 @@ def submit_task_timer(
         time_score=time_score,
         checkin_valid=checkin_valid,
         state_tag=state_tag,
-        task_date=today
+        task_date=task.task_date
     )
 
     db.add(task_state)
