@@ -16,12 +16,12 @@ def call_model_for_recommendations(
     max_results: int
 ) -> List[LearningResource]:
 
-    if not settings.api_key or not settings.model:
+    if not settings.LLM_API_KEY or not settings.LLM_MODEL:
         raise HTTPException(status_code=400, detail="未配置 ARK_API_KEY 或 ARK_MODEL")
 
     # AI 请求 payload
     payload = {
-        "model": settings.model,
+        "model": settings.LLM_MODEL,
         "temperature": 0.3,
         "messages": [
             {
@@ -37,17 +37,17 @@ def call_model_for_recommendations(
 
     data = json.dumps(payload, ensure_ascii=False).encode("utf-8")
     req = urlrequest.Request(
-        settings.base_url + "/chat/completions",
+        settings.LLM_BASE_URL  + "/chat/completions",
         data=data,
         headers={
             "Content-Type": "application/json",
-            "Authorization": f"Bearer {settings.api_key}"
+            "Authorization": f"Bearer {settings.LLM_API_KEY}"
         },
         method="POST"
     )
 
     try:
-        with urlrequest.urlopen(req, timeout=settings.request_timeout_seconds) as res:
+        with urlrequest.urlopen(req, timeout=settings.LLM_TIMEOUT) as res:
             body = json.loads(res.read().decode("utf-8"))
 
         # 模型返回解析
