@@ -246,8 +246,8 @@ class TimePoint(BaseModel):
     duration: int  # 单位：分钟
 
 class StudyTimeResponse(BaseModel):
-    total_duration: int
-    # data: List[TimePoint]
+    total_duration: float
+    
 #===================== 完成度图 ==========
 class TaskDailyGPAInfo(BaseModel):
     title: str
