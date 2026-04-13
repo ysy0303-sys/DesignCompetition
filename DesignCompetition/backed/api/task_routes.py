@@ -527,13 +527,9 @@ def get_day_study_time(
     ).all()
 
     total = sum(r.duration or 0 for r in records)
-
+    total_hours = round(total / 60, 2)
     return StudyTimeResponse(
-        total_duration=total
-        # data=[{
-        #     "date": str(query_date),
-        #     "duration": total
-        # }]
+        total_duration=total_hours
     )
 
 #每周学习时长
@@ -569,9 +565,10 @@ def get_week_study_time(
             "date": str(current_day),
             "duration": day_total
         })
-
+    total_hour = round(total / 60, 2)
+    
     return StudyTimeResponse(
-        total_duration=total
+        total_duration=total_hour
     )
 
 #每月学习时长
@@ -598,15 +595,17 @@ def get_month_study_time(
         day_total = sum(r.duration or 0 for r in records)
 
         total += day_total
-
+        
         result.append({
             "date": str(current_day),
             "duration": day_total
         })
-
+    total_hour = round(total / 60, 2)
     return StudyTimeResponse(
-        total_duration=total
+        total_duration=total_hour
+        
     )
+
 
 
 #=========== 任务计时 =====================
