@@ -527,7 +527,7 @@ def get_day_study_time(
     ).all()
 
     total = sum(r.duration or 0 for r in records)
-    total_hours = round(total / 60, 2)
+    total_hours = round(total / 60, 1)
     return StudyTimeResponse(
         total_duration=total_hours
     )
@@ -565,7 +565,7 @@ def get_week_study_time(
             "date": str(current_day),
             "duration": day_total
         })
-    total_hour = round(total / 60, 2)
+    total_hour = round(total / 60, 1)
     
     return StudyTimeResponse(
         total_duration=total_hour
@@ -600,7 +600,7 @@ def get_month_study_time(
             "date": str(current_day),
             "duration": day_total
         })
-    total_hour = round(total / 60, 2)
+    total_hour = round(total / 60, 1)
     return StudyTimeResponse(
         total_duration=total_hour
         
